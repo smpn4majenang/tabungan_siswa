@@ -1,0 +1,674 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simpanan Siswa Digital</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        .loading-overlay {
+            background: rgba(255, 255, 255, 0.9);
+            display: none;
+            position: fixed;
+            inset: 0;
+            z-index: 50;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        input::placeholder {
+            text-align: center;
+        }
+        
+        /* Animasi fade in */
+        .animate-fade-in {
+            animation: fadeIn 0.2s ease-in-out;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        
+        /* Optimasi untuk mobile */
+        @media (max-width: 640px) {
+            .mobile-padding {
+                padding: 1rem;
+            }
+            .mobile-text {
+                font-size: 0.875rem;
+            }
+        }
+        
+        /* Mencegah zoom pada input di iOS */
+        @media screen and (max-width: 768px) {
+            input, select, textarea {
+                font-size: 16px !important;
+            }
+        }
+    </style>
+</head>
+<body class="bg-gray-50 min-h-screen text-gray-800 font-sans">
+
+    <!-- Loading Overlay -->
+    <div id="loading" class="loading-overlay">
+        <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
+    </div>
+
+    <!-- 1. HALAMAN LOGIN -->
+    <div id="loginPage" class="flex items-center justify-center min-h-screen p-4">
+        <div class="bg-white p-6 md:p-8 rounded-2xl shadow-lg w-full max-w-md border border-gray-200">
+            <div class="flex flex-col items-center mb-8">
+                <div class="bg-blue-600 p-4 rounded-2xl mb-4 shadow-md">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-10 w-10 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+                    </svg>
+                </div>
+                <h1 class="text-2xl font-bold text-gray-800 mb-1">Tabungan Digital</h1>
+                <p class="text-gray-600 text-sm">Masuk ke akun Anda</p>
+            </div>
+            
+            <div class="space-y-5">
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Nomor Induk Siswa</label>
+                    <input type="text" id="loginNis" placeholder="Masukkan NIS" 
+                           class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition text-center">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Kata Sandi</label>
+                    <input type="password" id="loginPass" placeholder="••••••••" 
+                           class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition text-center">
+                </div>
+                <button onclick="handleLogin()" 
+                        class="w-full bg-blue-600 hover:bg-blue-700 text-white py-3 rounded-lg transition font-semibold shadow-md active:scale-[0.98]">
+                    Masuk
+                </button>
+            </div>
+            <div id="loginError" class="mt-4 p-3 bg-red-50 text-red-600 text-sm rounded-lg hidden border border-red-200"></div>
+        </div>
+    </div>
+
+    <!-- HEADER -->
+    <header id="appHeader" class="hidden bg-gradient-to-r from-blue-600 to-blue-700 text-white p-4 shadow-lg sticky top-0 z-40">
+        <div class="max-w-4xl mx-auto flex justify-between items-center">
+            <div>
+                <h2 id="userName" class="text-lg font-bold truncate max-w-[200px]">Nama Siswa</h2>
+                <p id="userInfo" class="text-blue-100 text-sm">Kelas | NIS</p>
+            </div>
+            <button onclick="logout()" class="p-2 bg-blue-800 hover:bg-red-600 rounded-lg transition active:scale-95">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                    <path fill-rule="evenodd" d="M3 3a1 1 0 00-1 1v12a1 1 0 102 0V4a1 1 0 00-1-1zm10.293 9.293a1 1 0 001.414 1.414l3-3a1 1 0 000-1.414l-3-3a1 1 0 10-1.414 1.414L14.586 9H7a1 1 0 100 2h7.586l-1.293 1.293z" clip-rule="evenodd" />
+                </svg>
+            </button>
+        </div>
+    </header>
+
+    <!-- 2. HALAMAN INPUT -->
+    <main id="inputPage" class="hidden max-w-4xl mx-auto p-4 animate-fade-in">
+        <div class="bg-white p-5 md:p-6 rounded-xl shadow border border-gray-200">
+            <h4 class="font-bold text-xl mb-6 text-gray-800 border-b pb-3">Catat Transaksi</h4>
+            <div class="grid gap-5">
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Tanggal</label>
+                    <input type="date" id="tTanggal" 
+                           class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Jenis Transaksi</label>
+                    <select id="tJenis" 
+                            class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none bg-white">
+                        <option value="SIMPAN">Simpan</option>
+                        <option value="PAKAI">Pakai</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Jumlah Uang (Rp)</label>
+                    <input list="jumlahList" id="tJumlah" placeholder="Contoh: 50000" 
+                           class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none">
+                    <datalist id="jumlahList"></datalist>
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Keterangan</label>
+                    <input list="keteranganList" id="tKet" placeholder="Contoh: Bayar buku, beli alat tulis" 
+                           class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none">
+                    <datalist id="keteranganList"></datalist>
+                </div>
+                <button onclick="saveTransaksi()" 
+                        class="w-full bg-blue-600 hover:bg-blue-700 text-white py-4 rounded-lg transition font-semibold shadow-md active:scale-[0.98] mt-2">
+                    Simpan Transaksi
+                </button>
+            </div>
+        </div>
+    </main>
+
+    <!-- 3. HALAMAN CEK -->
+    <main id="cekPage" class="hidden max-w-4xl mx-auto p-4 animate-fade-in">
+        <!-- Card Saldo -->
+        <div class="bg-gradient-to-r from-green-500 to-emerald-600 text-white p-6 rounded-xl shadow-lg mb-6">
+            <p class="text-green-100 text-sm font-medium mb-1">SALDO ANDA</p>
+            <h3 id="userSaldo" class="text-3xl font-bold">Rp 0</h3>
+            <p class="text-green-100 text-sm mt-2">Terakhir diperbarui: <span id="lastUpdated">-</span></p>
+        </div>
+
+        <!-- Tabel Riwayat -->
+        <div class="bg-white rounded-xl shadow border border-gray-200 overflow-hidden">
+            <div class="p-4 bg-gray-50 border-b flex justify-between items-center">
+                <h4 class="font-bold text-gray-800">Riwayat Transaksi</h4>
+                <button onclick="updateData()" 
+                        class="text-blue-600 hover:text-blue-800 text-sm font-medium flex items-center gap-1">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                    </svg>
+                    Refresh
+                </button>
+            </div>
+            <div class="overflow-x-auto">
+                <table class="w-full">
+                    <thead class="bg-gray-50">
+                        <tr>
+                            <th class="text-left p-3 text-sm font-medium text-gray-700">Tanggal & Keterangan</th>
+                            <th class="text-right p-3 text-sm font-medium text-gray-700">Jumlah</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tableBody" class="divide-y divide-gray-100">
+                        <!-- Data akan diisi oleh JavaScript -->
+                    </tbody>
+                </table>
+                <div id="noData" class="p-8 text-center text-gray-500 hidden">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12 mx-auto text-gray-300 mb-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
+                    </svg>
+                    <p>Belum ada transaksi</p>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- NAVIGASI BAWAH -->
+    <nav id="bottomNav" class="hidden fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 shadow-lg z-50">
+        <div class="flex justify-around max-w-4xl mx-auto">
+            <button onclick="switchPage('input')" id="btnInput" 
+                    class="flex flex-col items-center p-3 text-blue-600 hover:text-blue-700 transition flex-1">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                </svg>
+                <span class="text-xs font-medium mt-1">Input</span>
+            </button>
+            <button onclick="switchPage('cek')" id="btnCek" 
+                    class="flex flex-col items-center p-3 text-gray-500 hover:text-gray-700 transition flex-1">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+                </svg>
+                <span class="text-xs font-medium mt-1">Cek</span>
+            </button>
+        </div>
+    </nav>
+
+    <script>
+        // ===== KONFIGURASI =====
+        const API_URL = "https://script.google.com/macros/s/AKfycbxPPQQ8m4Ji4xS_AAOqb4hWsC-ZOuuJV7dyttHbu55wOhdJYRkFIq8u576Rua-pYt218A/exec";
+        
+        // Cache untuk performa
+        let currentUser = null;
+        let domCache = {};
+        let dropdownCache = null;
+        let lastUpdateTime = null;
+
+        // ===== INISIALISASI =====
+        document.addEventListener('DOMContentLoaded', function() {
+            // Cache DOM elements untuk akses cepat
+            cacheDOMElements();
+            
+            // Set tanggal default
+            setDefaultDate();
+            
+            // Event listeners
+            setupEventListeners();
+            
+            // Cek jika ada data login tersimpan
+            checkSavedLogin();
+        });
+
+        function cacheDOMElements() {
+            domCache = {
+                // Halaman
+                loading: document.getElementById('loading'),
+                loginPage: document.getElementById('loginPage'),
+                loginError: document.getElementById('loginError'),
+                appHeader: document.getElementById('appHeader'),
+                inputPage: document.getElementById('inputPage'),
+                cekPage: document.getElementById('cekPage'),
+                bottomNav: document.getElementById('bottomNav'),
+                
+                // Data user
+                userName: document.getElementById('userName'),
+                userInfo: document.getElementById('userInfo'),
+                userSaldo: document.getElementById('userSaldo'),
+                lastUpdated: document.getElementById('lastUpdated'),
+                
+                // Form input
+                tTanggal: document.getElementById('tTanggal'),
+                tJumlah: document.getElementById('tJumlah'),
+                tKet: document.getElementById('tKet'),
+                
+                // Tabel riwayat
+                tableBody: document.getElementById('tableBody'),
+                noData: document.getElementById('noData'),
+                
+                // Dropdown
+                jumlahList: document.getElementById('jumlahList'),
+                keteranganList: document.getElementById('keteranganList'),
+                
+                // Navigasi
+                btnInput: document.getElementById('btnInput'),
+                btnCek: document.getElementById('btnCek')
+            };
+        }
+
+        function setDefaultDate() {
+            const today = new Date().toISOString().split('T')[0];
+            domCache.tTanggal.value = today;
+        }
+
+        function setupEventListeners() {
+            // Enter key untuk login
+            document.getElementById('loginPass').addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') handleLogin();
+            });
+            
+            // Format input jumlah uang
+            domCache.tJumlah.addEventListener('input', formatCurrencyInput);
+            
+            // Update waktu refresh
+            setInterval(updateRefreshTime, 60000); // Update setiap menit
+        }
+
+        function checkSavedLogin() {
+            // Cek localStorage untuk login sebelumnya
+            const savedNIS = localStorage.getItem('lastNIS');
+            if (savedNIS) {
+                document.getElementById('loginNis').value = savedNIS;
+                document.getElementById('loginPass').focus();
+            }
+        }
+
+        // ===== FUNGSI UTILITAS =====
+        function toggleLoading(show) {
+            if (show) {
+                domCache.loading.style.display = 'flex';
+            } else {
+                // Delay kecil untuk menghindari flash loading
+                setTimeout(() => {
+                    domCache.loading.style.display = 'none';
+                }, 100);
+            }
+        }
+
+        function showError(message) {
+            domCache.loginError.textContent = message;
+            domCache.loginError.classList.remove('hidden');
+            setTimeout(() => {
+                domCache.loginError.classList.add('hidden');
+            }, 5000);
+        }
+
+        function formatCurrencyInput(e) {
+            const input = e.target;
+            let value = input.value.replace(/\D/g, '');
+            
+            if (value) {
+                value = parseInt(value).toLocaleString('id-ID');
+            }
+            
+            input.value = value;
+        }
+
+        function updateRefreshTime() {
+            if (lastUpdateTime) {
+                const now = new Date();
+                const diffMs = now - lastUpdateTime;
+                const diffMins = Math.floor(diffMs / 60000);
+                
+                if (diffMins < 1) {
+                    domCache.lastUpdated.textContent = 'Baru saja';
+                } else if (diffMins === 1) {
+                    domCache.lastUpdated.textContent = '1 menit yang lalu';
+                } else {
+                    domCache.lastUpdated.textContent = `${diffMins} menit yang lalu`;
+                }
+            }
+        }
+
+        // ===== FUNGSI API =====
+        async function fetchAPI(action, data = {}) {
+            const controller = new AbortController();
+            const timeout = setTimeout(() => controller.abort(), 8000); // Timeout 8 detik
+            
+            try {
+                const response = await fetch(API_URL, {
+                    method: 'POST',
+                    body: JSON.stringify({ action, ...data }),
+                    signal: controller.signal
+                });
+                
+                clearTimeout(timeout);
+                return await response.json();
+            } catch (error) {
+                if (error.name === 'AbortError') {
+                    throw new Error('Timeout: Server tidak merespon');
+                }
+                throw new Error('Gagal terhubung ke server');
+            }
+        }
+
+        // ===== LOGIN =====
+        async function handleLogin() {
+            const nis = document.getElementById('loginNis').value.trim();
+            const pass = document.getElementById('loginPass').value.trim();
+            
+            if (!nis || !pass) {
+                showError('Harap isi NIS dan kata sandi');
+                return;
+            }
+            
+            toggleLoading(true);
+            
+            try {
+                const result = await fetchAPI('login', { nis, password: pass });
+                
+                if (result.success) {
+                    currentUser = result.user;
+                    // Simpan NIS untuk login berikutnya
+                    localStorage.setItem('lastNIS', nis);
+                    initDashboard();
+                } else {
+                    showError(result.message || 'NIS atau kata sandi salah');
+                }
+            } catch (error) {
+                showError(error.message);
+            } finally {
+                toggleLoading(false);
+            }
+        }
+
+        function initDashboard() {
+            // Sembunyikan halaman login
+            domCache.loginPage.classList.add('hidden');
+            
+            // Tampilkan dashboard
+            domCache.appHeader.classList.remove('hidden');
+            domCache.bottomNav.classList.remove('hidden');
+            
+            // Update info user
+            domCache.userName.textContent = currentUser.nama;
+            domCache.userInfo.textContent = `${currentUser.kelas} | NIS: ${currentUser.nis}`;
+            
+            // Pindah ke halaman input
+            switchPage('input');
+            
+            // Load data dropdown dan saldo secara paralel
+            loadInitialData();
+        }
+
+        async function loadInitialData() {
+            try {
+                // Load dropdown dan saldo secara paralel
+                const [dropdownResult, saldoResult] = await Promise.allSettled([
+                    loadDropdownOptions(),
+                    fetchAPI('getDashboard', { nis: currentUser.nis })
+                ]);
+                
+                // Update saldo jika berhasil
+                if (saldoResult.status === 'fulfilled' && saldoResult.value.success) {
+                    updateSaldoDisplay(saldoResult.value.saldo);
+                }
+            } catch (error) {
+                console.warn('Gagal load data awal:', error);
+            }
+        }
+
+        // ===== NAVIGASI =====
+        function switchPage(page) {
+            // Sembunyikan semua halaman
+            domCache.inputPage.classList.add('hidden');
+            domCache.cekPage.classList.add('hidden');
+            
+            // Reset warna navigasi
+            domCache.btnInput.classList.remove('text-blue-600', 'hover:text-blue-700');
+            domCache.btnInput.classList.add('text-gray-500', 'hover:text-gray-700');
+            domCache.btnCek.classList.remove('text-blue-600', 'hover:text-blue-700');
+            domCache.btnCek.classList.add('text-gray-500', 'hover:text-gray-700');
+            
+            // Tampilkan halaman yang dipilih
+            if (page === 'input') {
+                domCache.inputPage.classList.remove('hidden');
+                domCache.btnInput.classList.remove('text-gray-500', 'hover:text-gray-700');
+                domCache.btnInput.classList.add('text-blue-600', 'hover:text-blue-700');
+                
+                // Fokus ke input jumlah
+                setTimeout(() => domCache.tJumlah.focus(), 100);
+            } else {
+                domCache.cekPage.classList.remove('hidden');
+                domCache.btnCek.classList.remove('text-gray-500', 'hover:text-gray-700');
+                domCache.btnCek.classList.add('text-blue-600', 'hover:text-blue-700');
+                
+                // Refresh data
+                updateData();
+            }
+        }
+
+        // ===== DROPDOWN OPTIONS =====
+        async function loadDropdownOptions() {
+            if (dropdownCache) {
+                updateDropdowns(dropdownCache);
+                return;
+            }
+            
+            try {
+                const result = await fetchAPI('getDropdownData');
+                if (result.success) {
+                    dropdownCache = result;
+                    updateDropdowns(result);
+                }
+            } catch (error) {
+                console.warn('Gagal load dropdown options:', error);
+            }
+        }
+
+        function updateDropdowns(data) {
+            // Update dropdown jumlah
+            if (data.jumlah && Array.isArray(data.jumlah)) {
+                const fragment = document.createDocumentFragment();
+                data.jumlah.forEach(item => {
+                    const option = document.createElement('option');
+                    option.value = item;
+                    fragment.appendChild(option);
+                });
+                domCache.jumlahList.innerHTML = '';
+                domCache.jumlahList.appendChild(fragment);
+            }
+            
+            // Update dropdown keterangan
+            if (data.keterangan && Array.isArray(data.keterangan)) {
+                const fragment = document.createDocumentFragment();
+                data.keterangan.forEach(item => {
+                    const option = document.createElement('option');
+                    option.value = item;
+                    fragment.appendChild(option);
+                });
+                domCache.keteranganList.innerHTML = '';
+                domCache.keteranganList.appendChild(fragment);
+            }
+        }
+
+        // ===== UPDATE DATA =====
+        async function updateData() {
+            if (!currentUser) return;
+            
+            toggleLoading(true);
+            
+            try {
+                // Ambil data dashboard dan transaksi secara paralel
+                const [dashboardResult, transaksiResult] = await Promise.all([
+                    fetchAPI('getDashboard', { nis: currentUser.nis }),
+                    fetchAPI('getTransaksi', { nis: currentUser.nis })
+                ]);
+                
+                // Update saldo
+                if (dashboardResult.success) {
+                    updateSaldoDisplay(dashboardResult.saldo);
+                }
+                
+                // Update riwayat transaksi
+                if (transaksiResult.success) {
+                    renderRiwayatTransaksi(transaksiResult.data || []);
+                }
+                
+                // Update timestamp
+                lastUpdateTime = new Date();
+                updateRefreshTime();
+                
+            } catch (error) {
+                console.error('Gagal update data:', error);
+                alert('Gagal memuat data. Periksa koneksi internet Anda.');
+            } finally {
+                toggleLoading(false);
+            }
+        }
+
+        function updateSaldoDisplay(saldo) {
+            domCache.userSaldo.textContent = 'Rp ' + saldo.toLocaleString('id-ID');
+        }
+
+        function renderRiwayatTransaksi(data) {
+            if (!data || data.length === 0) {
+                domCache.tableBody.innerHTML = '';
+                domCache.noData.classList.remove('hidden');
+                return;
+            }
+            
+            domCache.noData.classList.add('hidden');
+            
+            // Gunakan string template untuk performa lebih baik
+            let html = '';
+            data.forEach(item => {
+                const isSimpan = item.jenis === 'SIMPAN';
+                const warna = isSimpan ? 'text-green-600' : 'text-red-600';
+                const prefix = isSimpan ? '+' : '-';
+                
+                html += `
+                    <tr class="hover:bg-gray-50">
+                        <td class="p-3">
+                            <div class="text-xs text-gray-500">${item.tanggal}</div>
+                            <div class="font-medium text-gray-800">${item.keterangan || '-'}</div>
+                            <div class="text-xs text-gray-500 mt-1">${item.jenis}</div>
+                        </td>
+                        <td class="p-3 text-right font-semibold ${warna}">
+                            ${prefix} Rp ${item.jumlah.toLocaleString('id-ID')}
+                        </td>
+                    </tr>
+                `;
+            });
+            
+            domCache.tableBody.innerHTML = html;
+        }
+
+        // ===== SIMPAN TRANSAKSI =====
+        async function saveTransaksi() {
+            const tanggal = domCache.tTanggal.value;
+            const jenis = document.getElementById('tJenis').value;
+            let jumlah = domCache.tJumlah.value.replace(/\D/g, '');
+            const keterangan = domCache.tKet.value.trim();
+            
+            // Validasi
+            if (!tanggal) {
+                alert('Harap pilih tanggal');
+                domCache.tTanggal.focus();
+                return;
+            }
+            
+            if (!jumlah || parseInt(jumlah) <= 0) {
+                alert('Harap masukkan jumlah yang valid');
+                domCache.tJumlah.focus();
+                return;
+            }
+            
+            if (jenis === 'PAKAI' && !keterangan) {
+                alert('Harap masukkan keterangan untuk transaksi pakai');
+                domCache.tKet.focus();
+                return;
+            }
+            
+            // Konversi jumlah ke number
+            jumlah = parseInt(jumlah);
+            
+            toggleLoading(true);
+            
+            try {
+                const result = await fetchAPI('createTransaksi', {
+                    nis: currentUser.nis,
+                    jenis,
+                    jumlah,
+                    keterangan,
+                    tanggal
+                });
+                
+                if (result.success) {
+                    // Reset form
+                    domCache.tJumlah.value = '';
+                    domCache.tKet.value = '';
+                    
+                    // Tampilkan notifikasi sukses
+                    alert('Transaksi berhasil disimpan!');
+                    
+                    // Pindah ke halaman cek dan refresh data
+                    switchPage('cek');
+                } else {
+                    alert('Gagal menyimpan transaksi: ' + (result.message || 'Unknown error'));
+                }
+            } catch (error) {
+                alert('Terjadi kesalahan: ' + error.message);
+            } finally {
+                toggleLoading(false);
+            }
+        }
+
+        // ===== LOGOUT =====
+        function logout() {
+            if (confirm('Apakah Anda yakin ingin keluar?')) {
+                // Reset semua state
+                currentUser = null;
+                dropdownCache = null;
+                
+                // Reset UI ke halaman login
+                domCache.loginPage.classList.remove('hidden');
+                domCache.appHeader.classList.add('hidden');
+                domCache.bottomNav.classList.add('hidden');
+                domCache.inputPage.classList.add('hidden');
+                domCache.cekPage.classList.add('hidden');
+                
+                // Reset form
+                document.getElementById('loginPass').value = '';
+                document.getElementById('loginPass').focus();
+            }
+        }
+
+        // ===== OFFLINE DETECTION =====
+        window.addEventListener('online', () => {
+            console.log('Aplikasi kembali online');
+        });
+
+        window.addEventListener('offline', () => {
+            showError('Anda sedang offline. Beberapa fitur mungkin tidak tersedia.');
+        });
+
+        // ===== OPTIMASI MEMORY =====
+        // Clean up saat halaman ditutup
+        window.addEventListener('beforeunload', () => {
+            currentUser = null;
+            dropdownCache = null;
+        });
+    </script>
+</body>
+</html>
