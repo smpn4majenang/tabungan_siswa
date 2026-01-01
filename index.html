@@ -3,31 +3,67 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Simpanan Siswa Digital</title>
+    <title>Simpanan Siswa Digital - Multi Role</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap');
+        body { font-family: 'Inter', sans-serif; }
+        .loading-overlay { background: rgba(255, 255, 255, 0.8); display: none; position: fixed; inset: 0; z-index: 100; justify-content: center; align-items: center; }
         
-        body {
-            font-family: 'Inter', sans-serif;
+        input::placeholder { 
+            color: #94a3b8; 
+            font-weight: 500;
+            font-size: 0.875rem;
+        }
+        
+        .animate-fade-in { animation: fadeIn 0.3s ease-in; }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        
+        .field-label {
+            display: block;
+            font-size: 0.875rem;
+            font-weight: 800;
+            color: #2563eb;
+            text-transform: uppercase;
+            margin-bottom: 0.5rem;
+            margin-left: 0.25rem;
         }
 
-        .loading-overlay {
-            background: rgba(255, 255, 255, 0.8);
-            display: none;
-            position: fixed;
-            inset: 0;
-            z-index: 50;
-            justify-content: center;
+        .input-group {
+            position: relative;
+            display: flex;
             align-items: center;
         }
 
-        input::placeholder {
-            text-align: center;
+        .input-icon {
+            position: absolute;
+            left: 1rem;
+            color: #94a3b8;
+            pointer-events: none;
+        }
+
+        .standard-input {
+            width: 100%;
+            border-width: 2px;
+            border-color: #f1f5f9;
+            border-radius: 0.75rem;
+            padding: 1rem 1rem 1rem 2.75rem;
+            outline: 2px solid transparent;
+            outline-offset: 2px;
+            font-weight: 700;
+            background-color: #f8fafc;
+            font-size: 1rem;
+            transition-property: all;
+            transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+            transition-duration: 150ms;
+        }
+        .standard-input:focus {
+            border-color: #3b82f6;
+            background-color: #fff;
         }
     </style>
 </head>
-<body class="bg-gray-100 min-h-screen text-slate-800 pb-20">
+<body class="bg-gray-50 min-h-screen text-slate-800 pb-24">
 
     <div id="loading" class="loading-overlay">
         <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
@@ -35,150 +71,238 @@
 
     <!-- 1. HALAMAN LOGIN -->
     <div id="loginPage" class="flex items-center justify-center min-h-screen p-4 bg-slate-100">
-        <div class="bg-white p-10 rounded-2xl shadow-xl w-full max-w-md border border-slate-200">
-            <div class="flex flex-col items-center mb-10">
-                <div class="bg-blue-600 p-4 rounded-2xl mb-4 shadow-lg shadow-blue-200">
+        <!-- Menggunakan max-w-md agar sedikit lebih lebar dari max-w-sm -->
+        <div class="bg-white p-8 rounded-2xl shadow-xl w-full max-w-md border border-slate-200">
+            <div class="flex flex-col items-center mb-8">
+                <div class="bg-blue-600 p-4 rounded-2xl mb-4 shadow-lg">
                     <svg xmlns="http://www.w3.org/2000/svg" class="h-10 w-10 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z" />
                     </svg>
                 </div>
-                <h1 class="text-2xl font-extrabold text-blue-900 tracking-tight">Login</h1>
-                <p class="text-slate-500 mt-2 font-medium text-center">Tabungan Digital</p>
+                <h1 class="text-2xl font-black text-slate-900 tracking-tight text-center">E-Tabungan</h1>
+                <p class="text-slate-500 font-medium text-sm text-center">Silakan login untuk melanjutkan</p>
             </div>
             
-            <div class="space-y-6">
+            <div class="space-y-5">
                 <div>
-                    <label class="block text-base font-bold text-blue-700 text-center mb-2 uppercase">Nomor Induk Siswa</label>
-                    <input type="text" id="loginNis" placeholder="Masukkan Nomor Induk Siswa" class="mt-1 block w-full px-4 py-4 border-2 border-slate-200 rounded-xl focus:border-blue-500 outline-none text-center text-base font-bold transition-all">
+                    <label class="field-label">Username</label>
+                    <div class="input-group">
+                        <span class="input-icon">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                                <path fill-rule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clip-rule="evenodd" />
+                            </svg>
+                        </span>
+                        <input type="text" id="loginNis" placeholder="Masukkan Username" class="standard-input">
+                    </div>
                 </div>
                 <div>
-                    <label class="block text-base font-bold text-blue-700 text-center mb-2 uppercase">Sandi</label>
-                    <input type="password" id="loginPass" placeholder="••••••••" class="mt-1 block w-full px-4 py-4 border-2 border-slate-200 rounded-xl focus:border-blue-500 outline-none text-center text-base font-bold transition-all">
+                    <label class="field-label">Password</label>
+                    <div class="input-group">
+                        <span class="input-icon">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                                <path fill-rule="evenodd" d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z" clip-rule="evenodd" />
+                            </svg>
+                        </span>
+                        <input type="password" id="loginPass" placeholder="••••••••" class="standard-input">
+                    </div>
                 </div>
-                <button onclick="handleLogin()" class="w-full bg-blue-600 text-white py-4 rounded-xl hover:bg-blue-700 transition-all font-extrabold shadow-lg">Masuk</button>
+                <button onclick="handleLogin()" class="w-full bg-blue-600 text-white py-4 rounded-xl hover:bg-blue-700 transition-all font-bold shadow-lg shadow-blue-100">Masuk</button>
             </div>
-            <div id="loginError" class="mt-6 p-4 bg-red-100 text-red-700 text-center text-sm font-bold rounded-xl hidden"></div>
+            <div id="loginError" class="mt-4 p-3 bg-red-50 text-red-600 text-center text-xs font-bold rounded-xl hidden border border-red-100"></div>
         </div>
     </div>
 
-    <!-- HEADER GLOBAL (Hanya muncul saat login) -->
-    <header id="appHeader" class="hidden bg-blue-600 text-white p-4 shadow-md sticky top-0 z-40">
+    <!-- HEADER GLOBAL -->
+    <header id="appHeader" class="hidden bg-white border-b border-slate-200 p-4 sticky top-0 z-40">
         <div class="container mx-auto max-w-md flex justify-between items-center">
-            <div>
-                <h2 id="userName" class="text-2xl font-bold">Nama Siswa</h2>
-                <p id="userInfo" class="text-blue-100 text-base">Kelas | NIS</p>
+            <div class="flex items-center gap-3">
+                <div id="roleBadge" class="bg-blue-100 text-blue-700 text-[10px] font-black px-2 py-1 rounded-md uppercase">SISWA</div>
+                <div>
+                    <h2 id="userName" class="text-base font-extrabold text-slate-800 leading-tight">Nama Siswa</h2>
+                    <p id="userInfo" class="text-slate-600 text-sm font-bold tracking-tight">Kelas | NIS</p>
+                </div>
             </div>
-            <button onclick="logout()" class="p-2 bg-blue-700 rounded-lg hover:bg-red-600 transition">
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-                    <path fill-rule="evenodd" d="M3 3a1 1 0 00-1 1v12a1 1 0 102 0V4a1 1 0 00-1-1zm10.293 9.293a1 1 0 001.414 1.414l3-3a1 1 0 000-1.414l-3-3a1 1 0 10-1.414 1.414L14.586 9H7a1 1 0 100 2h7.586l-1.293 1.293z" clip-rule="evenodd" />
+            <button onclick="logout()" class="p-2 text-slate-400 hover:text-red-500 transition">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
                 </svg>
             </button>
         </div>
     </header>
 
-    <!-- 2. HALAMAN INPUT (FORM TRANSAKSI) -->
+    <!-- TAB INPUT -->
     <main id="inputPage" class="hidden container mx-auto p-4 max-w-md animate-fade-in">
-        <div class="bg-white p-6 rounded-2xl shadow-md border border-slate-200">
-            <h4 class="font-bold text-xl mb-6 text-blue-800 uppercase border-b pb-2">Catat Transaksi</h4>
-            <div class="space-y-5">
-                <div>
-                    <label class="block text-base font-bold text-blue-700">Tanggal</label>
-                    <input type="date" id="tTanggal" class="w-full mt-2 border-2 border-slate-100 rounded-xl p-4 focus:border-blue-500 outline-none font-semibold text-base bg-slate-50">
+        <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200">
+            <h4 class="font-black text-xl text-slate-900 mb-6 flex items-center gap-2">
+                <span class="p-2 bg-blue-50 rounded-lg text-blue-600">
+                    <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" /></svg>
+                </span>
+                <span id="inputTitle">Transaksi</span>
+            </h4>
+            <div class="space-y-6">
+                <div id="adminNisInput" class="hidden">
+                    <label class="field-label">Username Siswa</label>
+                    <input type="text" id="tTargetNis" placeholder="Masukkan Username Siswa" class="standard-input" style="padding-left: 1rem;">
                 </div>
+                
                 <div>
-                    <label class="block text-base font-bold text-blue-700">Jenis Transaksi</label>
-                    <select id="tJenis" class="w-full mt-2 border-2 border-slate-100 rounded-xl p-4 focus:border-blue-500 outline-none font-semibold text-lg bg-slate-50">
-                        <option value="SIMPAN">Simpan</option>
-                        <option value="PAKAI">Pakai</option>
-                    </select>
+                    <label class="field-label">Tanggal Transaksi</label>
+                    <input type="date" id="tTanggal" class="standard-input" style="padding-left: 1rem;">
                 </div>
-                <div>
-                    <label class="block text-base font-bold text-blue-700">Jumlah Uang</label>
-                    <input list="jumlahList" id="tJumlah" placeholder="Masukkan nominal..." class="w-full mt-2 border-2 border-slate-100 rounded-xl p-4 focus:border-blue-500 outline-none font-semibold text-base bg-slate-50">
-                    <datalist id="jumlahList"></datalist>
+
+                <div class="grid grid-cols-1 gap-6">
+                    <div>
+                        <label class="field-label">Jenis Transaksi</label>
+                        <select id="tJenis" class="standard-input appearance-none" style="padding-left: 1rem;">
+                            <option id="optSimpan" value="SIMPAN">Simpan</option>
+                            <option id="optPakai" value="PAKAI">Pakai</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="field-label">Jumlah</label>
+                        <input list="jumlahList" id="tJumlah" placeholder="Masukkan nominal (cth: 5000)" class="standard-input text-left" style="padding-left: 1rem;">
+                        <datalist id="jumlahList"></datalist>
+                    </div>
                 </div>
+
                 <div>
-                    <label class="block text-base font-bold text-blue-700">Keterangan</label>
-                    <input list="keteranganList" id="tKet" placeholder="Bayar buku RM, beli tas ..." class="w-full mt-2 border-2 border-slate-100 rounded-xl p-4 focus:border-blue-500 outline-none font-semibold text-base bg-slate-50">
+                    <label class="field-label">Keterangan / Untuk Apa?</label>
+                    <input list="keteranganList" id="tKet" placeholder="Misal: beli buku, beli tas" class="standard-input" style="padding-left: 1rem;">
                     <datalist id="keteranganList"></datalist>
                 </div>
-                <button onclick="saveTransaksi()" class="w-full bg-blue-600 text-white py-5 rounded-xl hover:bg-blue-700 transition font-black text-base shadow-lg uppercase mt-4">Simpan</button>
+
+                <button onclick="saveTransaksi()" class="w-full bg-blue-600 text-white py-5 rounded-2xl hover:bg-blue-700 transition-all font-black shadow-lg shadow-blue-100 uppercase tracking-wide mt-4">Simpan Transaksi</button>
+            </div>
+
+            <div id="siswaInfoBox" class="hidden mt-6 p-4 bg-amber-50 text-amber-800 text-xs font-bold rounded-2xl border border-amber-200 flex items-start gap-3">
+                <svg class="h-5 w-5 shrink-0 text-amber-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                <span>Siswa hanya diperbolehkan menginput pemakaian saldo. Untuk menabung (setor), harap hubungi Admin.</span>
             </div>
         </div>
     </main>
 
-    <!-- 3. HALAMAN CEK (SALDO & RIWAYAT) -->
+    <!-- TAB CEK (SISWA) -->
     <main id="cekPage" class="hidden container mx-auto p-4 max-w-md animate-fade-in">
-        <!-- Card Saldo -->
-        <div class="bg-white p-6 rounded-2xl shadow-md border-l-8 border-green-500 mb-6 flex flex-col items-center">
-            <p class="text-blue-500 text-2xl font-bold uppercase tracking-widest mb-1">Saldo</p>
-            <h3 id="userSaldo" class="text-2xl font-extrabold text-red-800">Rp 0</h3>
+        <div class="bg-gradient-to-br from-blue-600 to-blue-800 p-8 rounded-3xl shadow-xl mb-6 text-white relative overflow-hidden">
+            <svg class="absolute -right-4 -bottom-4 h-32 w-32 text-white opacity-10" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1.41 16.09V20h-2.82v-1.91c-1.84-.13-3.66-1.12-4.59-2.57l1.45-1.45c.67 1 1.66 1.7 2.82 1.83v-3.32l-1.95-.51c-2.02-.53-3.41-2.03-3.41-3.87 0-1.87 1.29-3.44 3.09-3.87V2h2.82v1.9c1.47.11 2.92.8 3.79 1.94l-1.39 1.39c-.58-.8-1.29-1.29-2.2-1.39v3.13l2.09.55c1.99.52 3.3 2.02 3.3 3.84 0 1.96-1.37 3.51-3.31 3.9zM10.59 7.82c0 .54.43.99 1.05 1.14V6.78c-.59.13-1.05.54-1.05 1.04zm3.14 8.3c0-.62-.43-1.04-1.14-1.24v2.54c.66-.17 1.14-.65 1.14-1.3z" /></svg>
+            <p class="text-blue-100 text-sm font-bold uppercase tracking-widest mb-2">Total Saldo Anda</p>
+            <h3 id="userSaldo" class="text-4xl font-black">Rp 0</h3>
         </div>
-
-        <!-- Tabel Riwayat -->
-        <div class="bg-white rounded-2xl shadow-md overflow-hidden border border-slate-200">
-            <div class="p-4 bg-slate-50 border-b flex justify-between items-center">
-                <h4 class="font-bold text-blue-700">Riwayat Transaksi</h4>
-                <button onclick="updateData()" class="text-blue-600 font-bold text-xs uppercase">Refresh</button>
+        <div class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
+            <div class="p-5 border-b flex justify-between items-center bg-slate-50">
+                <span class="text-xs font-black text-slate-500 uppercase tracking-widest">Riwayat Transaksi</span>
+                <button onclick="updateData()" class="p-2 bg-white border rounded-lg text-blue-600 hover:bg-blue-50 shadow-sm">
+                    <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" /></svg>
+                </button>
             </div>
-            <div class="overflow-x-auto">
-                <table class="w-full text-left text-sm">
-                    <tbody id="tableBody">
-                        <!-- Data diisi via JS -->
-                    </tbody>
-                </table>
-            </div>
+            <div id="tableBody" class="divide-y divide-slate-100"></div>
         </div>
     </main>
 
-    <!-- NAVIGASI BAWAH (Bottom Nav) -->
-    <nav id="bottomNav" class="hidden fixed bottom-0 left-0 right-0 bg-white border-t border-slate-200 flex justify-around p-2 z-50 shadow-[0_-4px_10px_rgba(0,0,0,0.05)]">
-        <button onclick="switchPage('input')" id="btnInput" class="flex flex-col items-center p-2 text-blue-600">
-            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
-            </svg>
-            <span class="text-sm font-bold mt-1 uppercase">Input</span>
+    <!-- TAB REKAP (ADMIN ONLY) -->
+    <main id="rekapPage" class="hidden container mx-auto p-4 max-w-md animate-fade-in">
+        <div class="grid grid-cols-2 gap-3 mb-6">
+            <div class="bg-white p-4 rounded-2xl shadow-sm border border-slate-100">
+                <p class="text-[12px] font-black text-slate-500 uppercase mb-1">Total Simpanan</p>
+                <p id="admTotalSimpan" class="text-base font-black text-green-600">Rp 0</p>
+            </div>
+            <div class="bg-white p-4 rounded-2xl shadow-sm border border-slate-100">
+                <p class="text-[12px] font-black text-slate-500 uppercase mb-1">Total Pemakaian</p>
+                <p id="admTotalPakai" class="text-base font-black text-red-600">Rp 0</p>
+            </div>
+            
+            <div class="col-span-2 bg-slate-900 p-6 rounded-2xl text-center shadow-lg border-b-4 border-blue-600">
+                <p class="text-base font-black text-white uppercase mb-2 tracking-widest">Saldo Kumulatif Semua Siswa</p>
+                <p id="admTotalSaldo" class="text-3xl font-black text-blue-400 flex justify-center items-center gap-2">
+                    <span>Rp</span>
+                    <span id="admTotalSaldoValue">0</span>
+                </p>
+            </div>
+        </div>
+
+        <div class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
+            <div class="p-5 bg-slate-50 flex flex-col gap-4">
+                <div class="flex justify-between items-center">
+                    <h4 class="font-black text-slate-800 text-base">Semua Transaksi</h4>
+                    <button onclick="loadAdminRekap()" class="text-blue-600 text-xs font-black uppercase">Refresh</button>
+                </div>
+                <input type="text" id="adminSearch" onkeyup="filterAdminTable()" placeholder="Cari Nama atau Username..." class="standard-input shadow-inner" style="padding-left: 1rem;">
+            </div>
+            <div id="adminTableBody" class="divide-y divide-slate-100 max-h-[400px] overflow-y-auto"></div>
+        </div>
+    </main>
+
+    <!-- BOTTOM NAV -->
+    <nav id="bottomNav" class="hidden fixed bottom-0 left-0 right-0 bg-white border-t border-slate-200 flex justify-around items-center p-3 z-50">
+        <button onclick="switchPage('input')" id="navInput" class="flex flex-col items-center p-2 transition-all">
+            <svg class="h-7 w-7" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v3m0 0v3m0-3h3m-3 0H9m12 0a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+            <span class="text-xs font-black mt-1 uppercase tracking-wider">Input</span>
         </button>
-        <button onclick="switchPage('cek')" id="btnCek" class="flex flex-col items-center p-2 text-slate-400">
-            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
-            </svg>
-            <span class="text-sm font-bold mt-1 uppercase">Cek</span>
+        <button onclick="switchPage('cek')" id="navCek" class="hidden flex flex-col items-center p-2 transition-all">
+            <svg class="h-7 w-7" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z" /></svg>
+            <span class="text-xs font-black mt-1 uppercase tracking-wider">Tabungan</span>
+        </button>
+        <button onclick="switchPage('rekap')" id="navRekap" class="hidden flex flex-col items-center p-2 transition-all">
+            <svg class="h-7 w-7" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" /></svg>
+            <span class="text-xs font-black mt-1 uppercase tracking-wider">Rekap</span>
         </button>
     </nav>
 
     <script>
-        const API_URL = "https://script.google.com/macros/s/AKfycbxPPQQ8m4Ji4xS_AAOqb4hWsC-ZOuuJV7dyttHbu55wOhdJYRkFIq8u576Rua-pYt218A/exec"; 
-
+        const API_URL = "https://script.google.com/macros/s/AKfycbzeZLfXMf8hxIn9bIjb9wyA737Sv0wsILQgquvyqeqbsm2PdkPLSEj7TfW-BH89tz1-0g/exec"; 
         let currentUser = null;
+        let adminDataCache = [];
 
-        function toggleLoading(show) {
-            document.getElementById('loading').style.display = show ? 'flex' : 'none';
-        }
+        function toggleLoading(show) { document.getElementById('loading').style.display = show ? 'flex' : 'none'; }
 
-        // FUNGSI NAVIGASI HALAMAN
         function switchPage(page) {
-            document.getElementById('inputPage').classList.add('hidden');
-            document.getElementById('cekPage').classList.add('hidden');
+            const pages = ['inputPage', 'cekPage', 'rekapPage'];
+            const navs = ['navInput', 'navCek', 'navRekap'];
             
-            // Reset Nav Color
-            document.getElementById('btnInput').classList.replace('text-blue-600', 'text-slate-400');
-            document.getElementById('btnCek').classList.replace('text-blue-600', 'text-slate-400');
+            pages.forEach(p => document.getElementById(p).classList.add('hidden'));
+            navs.forEach(n => {
+                const el = document.getElementById(n);
+                el.classList.remove('text-blue-600', 'scale-110');
+                el.classList.add('text-slate-300');
+            });
 
             if (page === 'input') {
                 document.getElementById('inputPage').classList.remove('hidden');
-                document.getElementById('btnInput').classList.replace('text-slate-400', 'text-blue-600');
+                document.getElementById('navInput').classList.replace('text-slate-300', 'text-blue-600');
+                document.getElementById('navInput').classList.add('scale-110');
                 setDefaultDate();
-            } else {
+                
+                const optSimpan = document.getElementById('optSimpan');
+                const tJenis = document.getElementById('tJenis');
+                const inputTitle = document.getElementById('inputTitle');
+                
+                if(currentUser && currentUser.role !== 'admin') {
+                    optSimpan.classList.add('hidden');
+                    optSimpan.disabled = true;
+                    tJenis.value = "PAKAI";
+                    inputTitle.innerText = "Pemakaian Saldo Tabungan";
+                    document.getElementById('siswaInfoBox').classList.remove('hidden');
+                } else {
+                    optSimpan.classList.remove('hidden');
+                    optSimpan.disabled = false;
+                    inputTitle.innerText = "Transaksi";
+                    document.getElementById('siswaInfoBox').classList.add('hidden');
+                }
+            } else if (page === 'cek') {
                 document.getElementById('cekPage').classList.remove('hidden');
-                document.getElementById('btnCek').classList.replace('text-slate-400', 'text-blue-600');
+                document.getElementById('navCek').classList.replace('text-slate-300', 'text-blue-600');
+                document.getElementById('navCek').classList.add('scale-110');
                 updateData();
+            } else if (page === 'rekap') {
+                document.getElementById('rekapPage').classList.remove('hidden');
+                document.getElementById('navRekap').classList.replace('text-slate-300', 'text-blue-600');
+                document.getElementById('navRekap').classList.add('scale-110');
+                loadAdminRekap();
             }
         }
 
         function setDefaultDate() {
-            const today = new Date().toISOString().split('T')[0];
-            document.getElementById('tTanggal').value = today;
+            document.getElementById('tTanggal').value = new Date().toISOString().split('T')[0];
         }
 
         async function handleLogin() {
@@ -188,96 +312,125 @@
             errorLabel.classList.add('hidden');
             
             if(!nis || !pass) {
-                errorLabel.innerText = "Lengkapi NIS & Sandi!";
+                errorLabel.innerText = "Lengkapi Username & Sandi!";
                 errorLabel.classList.remove('hidden');
                 return;
             }
             
             toggleLoading(true);
             try {
-                const response = await fetch(API_URL, {
-                    method: 'POST',
-                    body: JSON.stringify({ action: 'login', nis, password: pass })
-                });
-                const result = await response.json();
+                const res = await fetch(API_URL, { method: 'POST', body: JSON.stringify({ action: 'login', nis, password: pass }) });
+                const result = await res.json();
                 if (result.success) {
                     currentUser = result.user;
-                    initDashboard();
+                    initApp();
                 } else {
-                    errorLabel.innerText = result.message || "Gagal Login.";
+                    errorLabel.innerText = result.message;
                     errorLabel.classList.remove('hidden');
                 }
-            } catch (e) { 
-                errorLabel.innerText = "Masalah koneksi!"; 
-                errorLabel.classList.remove('hidden'); 
-            }
+            } catch (e) { errorLabel.innerText = "Gagal menghubungi server."; errorLabel.classList.remove('hidden'); }
             toggleLoading(false);
         }
 
-        function initDashboard() {
+        function initApp() {
             document.getElementById('loginPage').classList.add('hidden');
             document.getElementById('appHeader').classList.remove('hidden');
             document.getElementById('bottomNav').classList.remove('hidden');
             
             document.getElementById('userName').innerText = currentUser.nama;
-            document.getElementById('userInfo').innerText = `${currentUser.kelas} | NIS: ${currentUser.nis}`;
-            
-            switchPage('input'); // Default ke halaman input
-            loadDropdownOptions();
-        }
+            document.getElementById('userInfo').innerText = `${currentUser.kelas} | ID: ${currentUser.nis}`;
+            document.getElementById('roleBadge').innerText = currentUser.role;
 
-        async function loadDropdownOptions() {
-            try {
-                const response = await fetch(API_URL, {
-                    method: 'POST',
-                    body: JSON.stringify({ action: 'getDropdownData' })
-                });
-                const result = await response.json();
-                if (result.success) {
-                    document.getElementById('jumlahList').innerHTML = result.jumlah.map(j => `<option value="${j}">`).join('');
-                    document.getElementById('keteranganList').innerHTML = result.keterangan.map(k => `<option value="${k}">`).join('');
-                }
-            } catch (e) { console.error(e); }
+            if (currentUser.role === 'admin') {
+                document.getElementById('navRekap').classList.remove('hidden');
+                document.getElementById('adminNisInput').classList.remove('hidden');
+                switchPage('rekap');
+            } else {
+                document.getElementById('navCek').classList.remove('hidden');
+                switchPage('input');
+            }
+            loadDropdownOptions();
         }
 
         async function updateData() {
             toggleLoading(true);
             try {
-                const resDashboard = await fetch(API_URL, {
-                    method: 'POST',
-                    body: JSON.stringify({ action: 'getDashboard', nis: currentUser.nis })
-                });
-                const dataDash = await resDashboard.json();
-                document.getElementById('userSaldo').innerText = "Rp " + dataDash.saldo.toLocaleString('id-ID');
+                const resDash = await fetch(API_URL, { method: 'POST', body: JSON.stringify({ action: 'getDashboard', nis: currentUser.nis }) });
+                const dash = await resDash.json();
+                document.getElementById('userSaldo').innerText = "Rp " + dash.saldo.toLocaleString('id-ID');
 
-                const resTrx = await fetch(API_URL, {
-                    method: 'POST',
-                    body: JSON.stringify({ action: 'getTransaksi', nis: currentUser.nis })
-                });
-                const dataTrx = await resTrx.json();
-                const tbody = document.getElementById('tableBody');
-                tbody.innerHTML = '';
+                const resTrx = await fetch(API_URL, { method: 'POST', body: JSON.stringify({ action: 'getTransaksi', nis: currentUser.nis }) });
+                const trx = await resTrx.json();
+                const container = document.getElementById('tableBody');
+                container.innerHTML = '';
                 
-                dataTrx.data.forEach(item => {
-                    const isPlus = item.jenis === 'SIMPAN' || item.jenis === 'SETOR';
-                    const color = isPlus ? 'text-green-600' : 'text-red-600';
-                    const prefix = isPlus ? '+' : '-';
-                    
-                    tbody.innerHTML += `
-                        <tr class="border-b">
-                            <td class="p-4">
-                                <div class="text-[10px] text-slate-400 font-bold">${item.tanggal}</div>
-                                <div class="font-bold text-slate-700">${item.keterangan || 'Tanpa Ket.'}</div>
-                                <div class="text-[9px] uppercase tracking-widest text-slate-500">${item.jenis}</div>
-                            </td>
-                            <td class="p-4 text-right align-middle">
-                                <div class="font-bold ${color} text-base">${prefix}${item.jumlah.toLocaleString('id-ID')}</div>
-                            </td>
-                        </tr>
-                    `;
+                if(trx.data.length === 0) container.innerHTML = '<p class="p-10 text-center text-slate-400 text-sm font-bold">Belum ada riwayat transaksi</p>';
+
+                trx.data.forEach(item => {
+                    const isPlus = item.jenis === 'SIMPAN';
+                    container.innerHTML += `
+                        <div class="p-5 flex justify-between items-center hover:bg-slate-50 transition-colors">
+                            <div>
+                                <p class="text-[10px] text-slate-400 font-black uppercase tracking-widest mb-1">${item.tanggal}</p>
+                                <p class="font-bold text-slate-800 text-sm">${item.keterangan || 'Tanpa Keterangan'}</p>
+                            </div>
+                            <div class="text-right">
+                                <p class="font-black ${isPlus ? 'text-green-600' : 'text-red-500'} text-base">
+                                    ${isPlus ? '+' : '-'} Rp ${item.jumlah.toLocaleString('id-ID')}
+                                </p>
+                            </div>
+                        </div>`;
                 });
-            } catch (e) { console.error(e); }
+            } catch (e) {}
             toggleLoading(false);
+        }
+
+        async function loadAdminRekap() {
+            toggleLoading(true);
+            try {
+                const res = await fetch(API_URL, { method: 'POST', body: JSON.stringify({ action: 'getAllRekap' }) });
+                const result = await res.json();
+                if (result.success) {
+                    adminDataCache = result.data;
+                    document.getElementById('admTotalSimpan').innerText = "Rp " + result.totalSimpan.toLocaleString('id-ID');
+                    document.getElementById('admTotalPakai').innerText = "Rp " + result.totalPakai.toLocaleString('id-ID');
+                    
+                    document.getElementById('admTotalSaldoValue').innerText = result.totalSaldo.toLocaleString('id-ID');
+                    
+                    renderAdminTable(adminDataCache);
+                }
+            } catch (e) {}
+            toggleLoading(false);
+        }
+
+        function renderAdminTable(data) {
+            const container = document.getElementById('adminTableBody');
+            container.innerHTML = '';
+            data.forEach(item => {
+                const isPlus = item.jenis === 'SIMPAN';
+                container.innerHTML += `
+                    <div class="p-5 flex justify-between items-center hover:bg-slate-50">
+                        <div class="flex flex-col">
+                            <span class="font-black text-slate-900 text-sm">${item.nama}</span>
+                            <span class="text-[10px] text-slate-400 font-bold uppercase tracking-tighter">ID: ${item.nis} | ${item.tanggal}</span>
+                            <span class="text-[11px] text-slate-500 font-medium mt-1 italic">${item.keterangan || '-'}</span>
+                        </div>
+                        <div class="text-right">
+                            <span class="font-black text-base ${isPlus ? 'text-green-600' : 'text-red-500'}">
+                                ${isPlus ? '+' : '-'} Rp ${item.jumlah.toLocaleString('id-ID')}
+                            </span>
+                            <div class="text-[9px] font-black uppercase py-1 px-2 rounded-lg ${isPlus ? 'bg-green-50 text-green-700' : 'bg-red-50 text-red-700'} mt-1 inline-block">
+                                ${item.jenis}
+                            </div>
+                        </div>
+                    </div>`;
+            });
+        }
+
+        function filterAdminTable() {
+            const q = document.getElementById('adminSearch').value.toLowerCase();
+            const filtered = adminDataCache.filter(i => i.nama.toLowerCase().includes(q) || i.nis.toString().includes(q));
+            renderAdminTable(filtered);
         }
 
         async function saveTransaksi() {
@@ -285,27 +438,42 @@
             const jenis = document.getElementById('tJenis').value;
             const jumlah = document.getElementById('tJumlah').value;
             const keterangan = document.getElementById('tKet').value;
-            
-            if(!tanggal || !jumlah || jumlah <= 0) return alert("Cek kembali tanggal dan nominal!");
-            if(jenis === 'PAKAI' && !keterangan) return alert("Berikan keterangan penggunaan uang!");
+            const targetNis = (currentUser.role === 'admin') ? document.getElementById('tTargetNis').value.trim() : currentUser.nis;
+
+            if(!targetNis || !tanggal || !jumlah) return alert("Harap isi Nama, Tanggal, dan Nominal!");
             
             toggleLoading(true);
             try {
-                const response = await fetch(API_URL, {
-                    method: 'POST',
-                    body: JSON.stringify({ action: 'createTransaksi', nis: currentUser.nis, jenis, jumlah, keterangan, tanggal })
-                });
-                const result = await response.json();
+                const res = await fetch(API_URL, { method: 'POST', body: JSON.stringify({ 
+                    action: 'createTransaksi', 
+                    nis: targetNis, 
+                    jenis, jumlah, keterangan, tanggal 
+                }) });
+                const result = await res.json();
                 if(result.success) {
-                    alert("Data Tersimpan!");
+                    alert("Berhasil! Data transaksi telah tersimpan.");
                     document.getElementById('tJumlah').value = '';
                     document.getElementById('tKet').value = '';
-                    switchPage('cek'); // Pindah ke riwayat setelah simpan
-                } else {
-                    alert("Gagal: " + result.message);
+                    if(currentUser.role === 'admin') {
+                        document.getElementById('tTargetNis').value = '';
+                        switchPage('rekap');
+                    } else {
+                        switchPage('cek');
+                    }
                 }
-            } catch (e) { alert("Error sistem."); }
+            } catch (e) {}
             toggleLoading(false);
+        }
+
+        async function loadDropdownOptions() {
+            try {
+                const res = await fetch(API_URL, { method: 'POST', body: JSON.stringify({ action: 'getDropdownData' }) });
+                const result = await res.json();
+                if (result.success) {
+                    document.getElementById('jumlahList').innerHTML = result.jumlah.map(j => `<option value="${j}">`).join('');
+                    document.getElementById('keteranganList').innerHTML = result.keterangan.map(k => `<option value="${k}">`).join('');
+                }
+            } catch (e) {}
         }
 
         function logout() { location.reload(); }
